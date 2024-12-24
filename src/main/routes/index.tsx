@@ -5,18 +5,30 @@ import { Favorites } from "../pages/favorites";
 
 export type StackParamList = {
   home: undefined;
-  carDetails: undefined;
+  carDetails: { id: string };
   favorites: undefined;
-}
+};
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
 export function Routes() {
-  return(
+  return (
     <Stack.Navigator>
-      <Stack.Screen name="home"       component={Home} options={{ headerShown: false }} />
-      <Stack.Screen name="carDetails" component={CarDetails} options={{ headerShown: false }} />
-      <Stack.Screen name="favorites"  component={Favorites} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="home"
+        component={Home}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="carDetails"
+        component={CarDetails}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="favorites"
+        component={Favorites}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
-  )
+  );
 }
