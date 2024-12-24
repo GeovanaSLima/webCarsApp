@@ -26,12 +26,15 @@ export function Header() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F3F5F8",
+    backgroundColor: "#fff",
     flexDirection: "row",
     paddingHorizontal: 14,
-    paddingTop: 14,
+    paddingVertical: 14,
     alignItems: "center",
     justifyContent: "space-between",
+    borderBottomWidth: 0.3,
+    borderBlockColor: "#a8a8a8",
+
   },
   button: {
     backgroundColor: "#1f1f1f",
