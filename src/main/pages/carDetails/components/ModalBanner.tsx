@@ -22,7 +22,6 @@ export function ModalBanner({ imageUrl, closeModal }: ModalBannerProps) {
           size={16}
           color="#000"
           onPress={closeModal}
-          style={styles.closeButtonIcon}
         />
       </Pressable>
       <TouchableWithoutFeedback>

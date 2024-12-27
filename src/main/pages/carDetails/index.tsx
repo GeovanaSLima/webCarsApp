@@ -22,6 +22,7 @@ import { Label } from "./components/Label";
 import { FontAwesome6 } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { ModalBanner } from "./components/ModalBanner";
+import useStorage from "../../hooks/useStorage";
 
 type RouteDetailParams = {
   detail: {
@@ -34,6 +35,7 @@ type DetailRouteProps = RouteProp<RouteDetailParams, "detail">;
 export function CarDetails() {
   const route = useRoute<DetailRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const { saveItem } = useStorage();
 
   const [car, setCar] = useState<CarDetailProp>();
   const [loading, setLoading] = useState(true);
@@ -99,6 +101,11 @@ export function CarDetails() {
     setSelectedImage("");
   }
 
+  async function handleFavoriteCar() {
+    if (!car) return;
+    await saveItem(car);
+  }
+
   if (loading) {
     return (
       <SafeAreaView
@@ -132,7 +139,7 @@ export function CarDetails() {
           )}
 
           <View style={styles.header}>
-            <Pressable style={styles.saveContent}>
+            <Pressable style={styles.saveContent} onPress={handleFavoriteCar}>
               <Feather size={22} color="#FFF" name="bookmark" />
             </Pressable>
 
