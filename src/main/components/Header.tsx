@@ -18,7 +18,7 @@ export function Header() {
       <Image source={require("../../../assets/logo.png")} />
 
       <Pressable style={styles.button} onPress={handleNavigateFavorite}>
-        <Feather name="bookmark" size={24} color="#FFF" />
+        <Feather name="bookmark" size={22} color="#FFF" />
       </Pressable>
     </SafeAreaView>
   );
@@ -29,12 +29,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flexDirection: "row",
     paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingVertical: 10,
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 0.3,
     borderBlockColor: "#a8a8a8",
-
   },
   button: {
     backgroundColor: "#1f1f1f",
