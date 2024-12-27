@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Pressable,
+  Modal,
 } from "react-native";
 import { CarDetailProp } from "../../types/cars.type";
 import { doc, getDoc } from "firebase/firestore";
@@ -20,6 +21,7 @@ import { BannerLoading } from "./components/Banner";
 import { Label } from "./components/Label";
 import { FontAwesome6 } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
+import { ModalBanner } from "./components/ModalBanner";
 
 type RouteDetailParams = {
   detail: {
@@ -35,6 +37,8 @@ export function CarDetails() {
 
   const [car, setCar] = useState<CarDetailProp>();
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     async function loadCar() {
@@ -85,6 +89,16 @@ export function CarDetails() {
     });
   }
 
+  function openImage(imageUrl: string) {
+    setModalVisible(true);
+    setSelectedImage(imageUrl);
+  }
+
+  function handleCloseModal() {
+    setModalVisible(false);
+    setSelectedImage("");
+  }
+
   if (loading) {
     return (
       <SafeAreaView
@@ -112,7 +126,7 @@ export function CarDetails() {
             <BannerList
               images={car.images}
               handleOpenImage={(imageUrl) => {
-                console.log(imageUrl);
+                openImage(imageUrl);
               }}
             />
           )}
@@ -152,6 +166,13 @@ export function CarDetails() {
               <FontAwesome6 name="whatsapp" size={18} color="#FFF" />
             </Pressable>
           </View>
+
+          <Modal visible={modalVisible} transparent={true}>
+            <ModalBanner
+              imageUrl={selectedImage}
+              closeModal={handleCloseModal}
+            />
+          </Modal>
         </View>
       </SafeAreaView>
     </ScrollView>
