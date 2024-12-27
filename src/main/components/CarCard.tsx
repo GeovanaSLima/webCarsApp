@@ -14,19 +14,33 @@ import { StackParamList } from "../routes";
 interface CarItemProps {
   data: CarsProps;
   widthScreen: DimensionValue;
+  enableRemove?: boolean;
+  removeItem?: () => Promise<void>;
 }
 
-export function CarCard({ data, widthScreen }: CarItemProps) {
+export function CarCard({
+  data,
+  widthScreen,
+  enableRemove = false,
+  removeItem,
+}: CarItemProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleNavigate() {
     navigation.navigate("carDetails", { id: data.id });
   }
 
+  async function handleRemove() {
+    if (!removeItem) return;
+
+    await removeItem();
+  }
+
   return (
     <Pressable
       style={[styles.container, { width: widthScreen }]}
       onPress={handleNavigate}
+      onLongPress={enableRemove ? handleRemove : () => {}}
     >
       <Image
         style={styles.cover}
