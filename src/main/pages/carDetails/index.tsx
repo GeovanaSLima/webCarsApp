@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   ActivityIndicator,
   ScrollView,
-  Pressable,
   Modal,
 } from "react-native";
 import { CarDetailProp } from "../../types/cars.type";
@@ -23,6 +22,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { ModalBanner } from "./components/ModalBanner";
 import useStorage from "../../hooks/useStorage";
+import { Button } from "../../components/Button";
 
 type RouteDetailParams = {
   detail: {
@@ -120,12 +120,12 @@ export function CarDetails() {
     <ScrollView showsVerticalScrollIndicator={false}>
       <SafeAreaView>
         <View style={styles.container}>
-          <Pressable
-            style={styles.backButton}
+          <Button
+            buttonStyle={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Feather name="arrow-left" size={36} color="#000" />
-          </Pressable>
+            <FontAwesome6 name="arrow-left" size={22} color="#000" />
+          </Button>
 
           {loading && <BannerLoading />}
 
@@ -139,9 +139,12 @@ export function CarDetails() {
           )}
 
           <View style={styles.header}>
-            <Pressable style={styles.saveContent} onPress={handleFavoriteCar}>
-              <Feather size={22} color="#FFF" name="bookmark" />
-            </Pressable>
+            <Button
+              buttonStyle={styles.saveContent}
+              onPress={handleFavoriteCar}
+            >
+              <FontAwesome6 name="bookmark" size={24} color="#FFF" />
+            </Button>
 
             <Text style={styles.title}>{car?.name}</Text>
             <Text>{car?.model}</Text>
@@ -168,10 +171,10 @@ export function CarDetails() {
               <Text>{car?.description}</Text>
             </View>
 
-            <Pressable style={styles.callButton} onPress={handleCallPhone}>
+            <Button buttonStyle={styles.callButton} onPress={handleCallPhone}>
               <Text style={styles.callText}>Conversar com vendedor</Text>
-              <FontAwesome6 name="whatsapp" size={18} color="#FFF" />
-            </Pressable>
+              <FontAwesome6 name="whatsapp" size={20} color="#FFF" />
+            </Button>
           </View>
 
           <Modal visible={modalVisible} transparent={true}>
@@ -221,7 +224,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 99,
     padding: 12,
-    borderRadius: 99,
+    borderRadius: 50,
+    height: 50,
+    width: 50,
+    alignItems: "center",
+    justifyContent: "center",
     right: 8,
     top: -24,
   },

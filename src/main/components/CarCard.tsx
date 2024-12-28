@@ -1,15 +1,9 @@
-import {
-  DimensionValue,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-} from "react-native";
+import { DimensionValue, StyleSheet, Text, View, Image } from "react-native";
 import { CarsProps } from "../types/cars.type";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../routes";
+import { Button } from "./Button";
 
 interface CarItemProps {
   data: CarsProps;
@@ -37,8 +31,8 @@ export function CarCard({
   }
 
   return (
-    <Pressable
-      style={[styles.container, { width: widthScreen }]}
+    <Button
+      buttonStyle={[styles.container, { width: widthScreen }]}
       onPress={handleNavigate}
       onLongPress={enableRemove ? handleRemove : () => {}}
     >
@@ -57,7 +51,7 @@ export function CarCard({
       <View style={styles.divisor}></View>
 
       <Text style={[styles.text, { marginTop: 4 }]}>{data.city}</Text>
-    </Pressable>
+    </Button>
   );
 }
 

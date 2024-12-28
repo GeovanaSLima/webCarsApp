@@ -1,12 +1,12 @@
 import {
   Image,
-  Pressable,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { Button } from "../../../components/Button";
 
 interface ModalBannerProps {
   imageUrl: string;
@@ -16,14 +16,9 @@ interface ModalBannerProps {
 export function ModalBanner({ imageUrl, closeModal }: ModalBannerProps) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.closeButton}>
-        <FontAwesome6
-          name="xmark"
-          size={16}
-          color="#000"
-          onPress={closeModal}
-        />
-      </Pressable>
+      <Button buttonStyle={styles.closeButton} onPress={closeModal}>
+        <FontAwesome6 name="xmark" size={16} color="#000" />
+      </Button>
       <TouchableWithoutFeedback>
         <Image source={{ uri: imageUrl }} style={styles.image} />
       </TouchableWithoutFeedback>
