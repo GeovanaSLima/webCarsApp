@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  StyleSheet,
-  Pressable,
-  FlatList,
-} from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, FlatList } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -14,6 +7,7 @@ import { useEffect, useState } from "react";
 import { CarsProps } from "../../types/cars.type";
 import { CarCard } from "../../components/CarCard";
 import useStorage from "../../hooks/useStorage";
+import { Button } from "../../components/Button";
 
 export function Favorites() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -38,10 +32,9 @@ export function Favorites() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        {/* TODO: search how to add opacity when clicking the pressable */}
-        <Pressable onPress={() => navigation.goBack()}>
+        <Button onPress={() => navigation.goBack()}>
           <FontAwesome6 name="arrow-left" size={24} color="#000" />
-        </Pressable>
+        </Button>
         <Text style={styles.title}>Meus Favoritos</Text>
       </View>
 

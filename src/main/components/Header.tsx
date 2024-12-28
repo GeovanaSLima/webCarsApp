@@ -1,10 +1,11 @@
-import { Image, Pressable, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Feather } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../routes";
+import { Button } from "./Button";
 
 export function Header() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -17,9 +18,9 @@ export function Header() {
     <SafeAreaView style={styles.container}>
       <Image source={require("../../../assets/logo.png")} />
 
-      <Pressable style={styles.button} onPress={handleNavigateFavorite}>
-        <Feather name="bookmark" size={22} color="#FFF" />
-      </Pressable>
+      <Button buttonStyle={styles.button} onPress={handleNavigateFavorite}>
+        <FontAwesome6 name="bookmark" size={20} color="#FFF" />
+      </Button>
     </SafeAreaView>
   );
 }
