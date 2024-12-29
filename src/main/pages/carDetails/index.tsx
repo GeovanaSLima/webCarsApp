@@ -14,7 +14,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../routes";
-import { Feather } from "@expo/vector-icons";
 import { BannerList } from "./components/BannerList";
 import { BannerLoading } from "./components/Banner";
 import { Label } from "./components/Label";
@@ -23,6 +22,7 @@ import * as Linking from "expo-linking";
 import { ModalBanner } from "./components/ModalBanner";
 import useStorage from "../../hooks/useStorage";
 import { Button } from "../../components/Button";
+import { useToast } from "../../hooks/useToast";
 
 type RouteDetailParams = {
   detail: {
@@ -36,6 +36,7 @@ export function CarDetails() {
   const route = useRoute<DetailRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const { saveItem } = useStorage();
+  const { showToast } = useToast();
 
   const [car, setCar] = useState<CarDetailProp>();
   const [loading, setLoading] = useState(true);
@@ -104,6 +105,7 @@ export function CarDetails() {
   async function handleFavoriteCar() {
     if (!car) return;
     await saveItem(car);
+    showToast("Carro favoritado com sucesso", "SUCCESS");
   }
 
   if (loading) {
