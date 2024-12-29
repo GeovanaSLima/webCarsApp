@@ -1,4 +1,11 @@
-import { View, Text, SafeAreaView, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  FlatList,
+  Alert,
+} from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -28,8 +35,27 @@ export function Favorites() {
 
   async function handleRemoveCar(id: string) {
     const listCars = await removeItem(id);
-    setCars(listCars);
 
+    Alert.alert(
+      "Remover Favorito",
+      "Certeza que deseja remover este carro dos favoritos?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Remover",
+          onPress: () => {
+            removeCar(listCars);
+          },
+        },
+      ]
+    );
+  }
+
+  function removeCar(listCars: CarsProps[]) {
+    setCars(listCars);
     showToast("Carro removido dos favoritos com sucesso", "DEFAULT");
   }
 
