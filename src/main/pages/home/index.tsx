@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   View,
@@ -6,10 +6,11 @@ import {
   StyleSheet,
   ActivityIndicator,
   FlatList,
+  Keyboard,
 } from "react-native";
 import { Header } from "../../components/Header";
 import { Input } from "../../components/Input";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { CarsProps } from "../../types/cars.type";
 import { CarCard } from "../../components/CarCard";
@@ -52,6 +53,65 @@ export function Home() {
     });
   }
 
+  const debounce = (func: (...args: string[]) => void, delay: number) => {
+    let timeout: NodeJS.Timeout | null = null;
+
+    return (...args: string[]) => {
+      if (timeout) {
+        clearInterval(timeout);
+      }
+
+      timeout = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  function handleInputChange(text: string) {
+    setSearchInput(text);
+    delayedApiCall(text);
+  }
+
+  const delayedApiCall = useCallback(
+    debounce(async (newText: string) => await fetchSearchCar(newText), 1000),
+    []
+  );
+
+  async function fetchSearchCar(newText: string) {
+    if (newText === "") {
+      await loadCars();
+      setSearchInput("");
+      return;
+    }
+
+    setCars([]);
+    const q = query(
+      collection(db, "cars"),
+      where("name", ">=", newText.toUpperCase()),
+      where("name", "<=", newText.toUpperCase() + "\uf8ff")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    let listCars = [] as CarsProps[];
+
+    querySnapshot.forEach((doc) => {
+      listCars.push({
+        id: doc.id,
+        name: doc.data().name,
+        year: doc.data().year,
+        km: doc.data().km,
+        city: doc.data().city,
+        price: doc.data().price,
+        uid: doc.data().uid,
+        images: doc.data().images,
+      });
+    });
+
+    setCars(listCars);
+    Keyboard.dismiss();
+  }
+
   return (
     <>
       <Header />
@@ -61,7 +121,7 @@ export function Home() {
           <Input
             placeholder="Digite o nome do carro..."
             value={searchInput}
-            onChangeText={(text) => setSearchInput(text)}
+            onChangeText={(text) => handleInputChange(text)}
           />
         </View>
 
