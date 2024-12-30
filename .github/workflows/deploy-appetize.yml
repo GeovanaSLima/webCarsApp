@@ -32,7 +32,7 @@ jobs:
 
       # 5. Fazer o upload do APK para o Appetize
       - name: Upload APK to Appetize
-        uses: appetizeio/appetize-action@v1.0.0
+        uses: appetizeio/github-action-appetize@v1.0.3
         with:
           api_key: ${{ secrets.APPETIZE_API_KEY }} # Sua chave API do Appetize (adicionada nos GitHub Secrets)
           file_path: ./android/app/build/outputs/apk/release/app-release.apk # Caminho para o arquivo APK gerado
