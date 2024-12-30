@@ -16,15 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Instalação do Android SDK
-      - name: Set up Android SDK
-        uses: reactivecircus/android-toolchain@v2
-        with:
-          api-level: 30 # Você pode ajustar para a versão desejada do Android
-          target: android-30
-          arch: x86_64 # Você pode ajustar para o tipo de arquitetura do seu projeto
-          force: true
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -39,10 +30,35 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Construção do app (APK ou iOS)
-      - name: Build the app (Android APK ou iOS IPA)
+         - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Execute Gradle build
         run: |
-          npm run android # Ou npm run ios se for iOS
+          cd android
+          ./gradlew build
+      - name: Build Android JS Bundle
+        run: |
+          yarn run package-android
+      - name: Delete Android build duplicate assets resource
+        run: yarn run delete-pics
+      - name: Install bundler
+        run: |
+          cd android
+          gem install bundler
+      - name: Install gem plugins
+        run: |
+          cd android
+          bundle install
 
       # Upload do APK para o Appetize
       - name: Upload APK to Appetize
