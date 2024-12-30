@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [16.x, 18.x]
 
     steps:
       - name: Checkout code
@@ -26,28 +26,27 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      # Instalar dependências do projeto
+      # Instalar dependências
       - name: Install dependencies
         run: npm install
 
-      # Instalar Expo CLI
+      # Instalar Expo CLI (novo)
       - name: Install Expo CLI
         run: npm install -g expo-cli
 
-      # Build do app para Android ou iOS (APK ou IPA)
+      # Build do app para Android (APK)
       - name: Build the app (Android APK)
         run: |
           expo build:android -t apk --no-publish
-          # Caso seja iOS: expo build:ios -t archive
 
-      # Obter o caminho do arquivo APK
+      # Obter o caminho do APK gerado
       - name: Get the APK file
         run: |
           APK_PATH=$(ls ./dist/*.apk)
           echo "APK path: $APK_PATH"
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
-      # Fazer o upload do APK para Appetize
+      # Upload do APK para Appetize
       - name: Upload APK to Appetize
         uses: appetizeio/github-action-appetize@v1.0.3
         with:
