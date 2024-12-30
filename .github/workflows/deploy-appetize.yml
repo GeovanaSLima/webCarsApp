@@ -1,9 +1,9 @@
 name: Deploy to Appetize
 
 on:
-  pull_request:
+  push:
     branches:
-      - master # ou a branch que você deseja usar como base para PRs
+      - master
 
 jobs:
   build:
@@ -16,47 +16,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Configuração do Node.js
+      # Instalação do Android SDK
+      - name: Set up Android SDK
+        uses: reactivecircus/android-toolchain@v2
+        with:
+          api-level: 30 # Você pode ajustar para a versão desejada do Android
+          target: android-30
+          arch: x86_64 # Você pode ajustar para o tipo de arquitetura do seu projeto
+          force: true
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
 
-      # 2. Instalação de dependências
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+
+      # Instalação de dependências
       - name: Install dependencies
         run: npm install
 
-      # 3. Instalação do Android SDK
-      - name: Install Android SDK
+      # Construção do app (APK ou iOS)
+      - name: Build the app (Android APK ou iOS IPA)
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y openjdk-8-jdk wget unzip
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O commandlinetools.zip
-          unzip commandlinetools.zip -d android-sdk
-          sudo mv android-sdk /usr/local/android-sdk
-          export ANDROID_HOME=/usr/local/android-sdk
-          export PATH=$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
-          sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
-          echo "ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+          npm run android # Ou npm run ios se for iOS
 
-      # 4. Construção do app (APK para Android)
-      - name: Build the app (Android APK)
-        run: |
-          npm run android
-
-      # 5. Fazer o upload do APK para o Appetize
+      # Upload do APK para o Appetize
       - name: Upload APK to Appetize
         uses: appetizeio/github-action-appetize@v1.0.3
         with:
-          api_key: ${{ secrets.APPETIZE_API_KEY }} # Sua chave API do Appetize (adicionada nos GitHub Secrets)
-          file_path: ./android/app/build/outputs/apk/release/app-release.apk # Caminho para o arquivo APK gerado
-          platform: android # Ou "ios" se você estiver usando iOS
-          wait_for_processing: true # Aguarda o processamento do upload
+          api_key: ${{ secrets.APPETIZE_API_KEY }}
+          file_path: ./android/app/build/outputs/apk/release/app-release.apk
+          platform: android
+          wait_for_processing: true
 
-      # 6. Exibir URL do Appetize
+      # Exibir URL do Appetize
       - name: Display Appetize URL
         run: |
           echo "Appetize URL: https://appetize.io/app/${{ steps.upload.outputs.appetize_url }}"
