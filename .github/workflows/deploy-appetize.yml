@@ -9,26 +9,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
     steps:
-      # 1. Checkout do código
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # 2. Configuração do Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # 1. Configuração do Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
-      # 3. Instalação de dependências
+      # 2. Instalação de dependências
       - name: Install dependencies
-        run: npm install # Substitua se necessário
+        run: npm install
 
-      # 4. Construção do app
-      - name: Build the app (Android APK ou iOS IPA)
+      # 3. Instalação do Android SDK
+      - name: Install Android SDK
         run: |
-          npm run android # Comando para gerar o APK, caso seja React Native, ajuste conforme seu projeto
-          # Ou se for para iOS: npm run ios
+          sudo apt-get update -y
+          sudo apt-get install -y openjdk-8-jdk wget unzip
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O commandlinetools.zip
+          unzip commandlinetools.zip -d android-sdk
+          sudo mv android-sdk /usr/local/android-sdk
+          export ANDROID_HOME=/usr/local/android-sdk
+          export PATH=$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+          sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+          echo "ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+
+      # 4. Construção do app (APK para Android)
+      - name: Build the app (Android APK)
+        run: |
+          npm run android
 
       # 5. Fazer o upload do APK para o Appetize
       - name: Upload APK to Appetize
