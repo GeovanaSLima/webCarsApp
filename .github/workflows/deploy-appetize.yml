@@ -1,6 +1,9 @@
 name: Deploy to Appetize
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
@@ -14,45 +17,46 @@ jobs:
         node-version: [22.x]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      # Instalar Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
 
-      - run: npm install
-      - run: npm ci
-      - run: npm run build --if-present
+      # Instalar dependências do projeto
+      - name: Install dependencies
+        run: npm install
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+      # Instalar Expo CLI
+      - name: Install Expo CLI
+        run: npm install -g expo-cli
 
-      - name: Build the app (Android APK ou iOS IPA)
+      # Build do app para Android ou iOS (APK ou IPA)
+      - name: Build the app (Android APK)
         run: |
-          npm run android # Ou npm run ios se for iOS
+          expo build:android -t apk --no-publish
+          # Caso seja iOS: expo build:ios -t archive
 
-      # Upload do APK para o Appetize
+      # Obter o caminho do arquivo APK
+      - name: Get the APK file
+        run: |
+          APK_PATH=$(ls ./dist/*.apk)
+          echo "APK path: $APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+
+      # Fazer o upload do APK para Appetize
       - name: Upload APK to Appetize
         uses: appetizeio/github-action-appetize@v1.0.3
         with:
-          api_key: ${{ secrets.APPETIZE_API_KEY }}
-          file_path: ./android/app/build/outputs/apk/release/app-release.apk
-          platform: android
-          wait_for_processing: true
+          api_key: ${{ secrets.APPETIZE_API_KEY }} # Chave de API do Appetize
+          file_path: ${{ env.APK_PATH }} # Caminho do APK
+          platform: android # Ou "ios" se for iOS
+          wait_for_processing: true # Espera o processamento do upload
 
-      # Exibir URL do Appetize
+      # Exibir a URL do Appetize
       - name: Display Appetize URL
         run: |
           echo "Appetize URL: https://appetize.io/app/${{ steps.upload.outputs.appetize_url }}"
