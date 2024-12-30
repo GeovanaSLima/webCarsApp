@@ -1,9 +1,9 @@
 name: Deploy to Appetize
 
 on:
-  push:
+  pull_request:
     branches:
-      - master
+      - master # ou a branch que você deseja usar como base para PRs
 
 jobs:
   build:
