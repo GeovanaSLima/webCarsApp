@@ -38,23 +38,10 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Execute Gradle build
+
+      - name: Build the app (Android APK ou iOS IPA)
         run: |
-          cd android
-          ./gradlew build
-      - name: Build Android JS Bundle
-        run: |
-          yarn run package-android
-      - name: Delete Android build duplicate assets resource
-        run: yarn run delete-pics
-      - name: Install bundler
-        run: |
-          cd android
-          gem install bundler
-      - name: Install gem plugins
-        run: |
-          cd android
-          bundle install
+          npm run android # Ou npm run ios se for iOS
 
       # Upload do APK para o Appetize
       - name: Upload APK to Appetize
